@@ -1,0 +1,322 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Produits - Site Luxe</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Styles pour un look luxueux et moderne */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="datetime-local"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        header {
+            background: linear-gradient(to right, #f12711, #f5af19);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer {
+            background: linear-gradient(to right, #f12711, #f5af19);
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .product-card {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+            .product-card:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+            }
+
+            .product-card img {
+                width: 100%;
+                height: auto;
+                border-bottom: 1px solid #eee;
+                transition: transform 0.3s ease-in-out;
+            }
+
+            .product-card:hover img {
+                transform: translateY(-3%);
+            }
+
+        .product-details {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-description {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .product-genre {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .change-color {
+            transition: background-color 0.3s ease-in-out;
+        }
+
+            .change-color:hover {
+                background-color: #ffcc00;
+            }
+
+        .cart {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 10px 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-icon {
+            font-size: 24px;
+            color: #ff8c00;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            list-style: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+            width: 200px;
+        }
+
+            .cart-items li {
+                margin-bottom: 5px;
+                display: flex;
+                align-items: center;
+            }
+
+                .cart-items li .product-name {
+                    margin-left: 5px;
+                }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .error-notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ff0000;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 9999;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <h1>Librairie</h1>
+        </div>
+    </header>
+    <span id="reservationMessage" style="color: red;">@ViewBag.ReservationMessage</span>
+
+    <!-- Structure de la page de détails -->
+    <div class="col-md-8">
+        <div class="product-card">
+            <img src="@Model.CheminImage" class="card-img-top" alt="Product Image">
+            <div class="product-details">
+                <h5 class="product-title">@Model.Nom</h5>
+                <p class="product-description">@Model.Description</p>
+                <p class="product-genre">Genre : @Model.Genre</p>
+                <!-- Formulaire pour choisir la date de réservation -->
+                <form id="addToCartForm" asp-controller="Acceuil" asp-action="AjouterAuPanier" method="post">
+                    <input type="hidden" id="productId" name="produitId" value="@Model.Id" />
+
+                    <!-- Date de réservation -->
+                    <div class="form-group">
+                        <label for="dateReservation">Date de réservation :</label>
+                        <input type="datetime-local" id="dateReservation" name="dateReservation" required />
+                    </div>
+
+                    <!-- Date d'expiration -->
+                    <div class="form-group">
+                        <label for="dateExpiration">Date d'expiration :</label>
+                        <input type="datetime-local" id="dateExpiration" name="dateExpiration" required />
+                    </div>
+
+                    <button class="btn btn-primary add-to-cart-btn change-color" type="submit" data-product-id="@Model.Id">
+                        <i class="fas fa-cart-plus"></i> Ajouter au panier
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Section du panier -->s
+    <div class="cart">
+        <i class="fas fa-shopping-cart cart-icon"></i>
+        <span id="cartCount">0</span> articles dans le panier
+        <ul id="cartItems" class="cart-items">
+            <!-- Liste des produits dans le panier -->
+        </ul>
+        <form asp-controller="Acceuil" asp-action="AjouterAuPanier" method="post">
+            <input type="hidden" id="productId" name="produitId" value="@Model.Id" />
+            <button id="validerPanierBtn" class="btn btn-success">Valider le panier</button>
+        </form>
+
+    </div>
+
+    <!-- Scripts JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>$(document).ready(function () {
+            document.addEventListener('DOMContentLoaded', () => {
+                const addToCartForm = document.getElementById('addToCartForm');
+
+                addToCartForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const dateReservation = document.getElementById('dateReservation').value;
+                    const dateExpiration = document.getElementById('dateExpiration').value;
+
+                    const formData = new FormData(addToCartForm);
+                    const response = await fetch(addToCartForm.action, {
+                        method: addToCartForm.method,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams(formData).toString()
+                    });
+
+                    const result = await response.text();
+
+                    if (result.includes("Ce produit est déjà réservé.")) {
+                        document.getElementById('reservationMessage').textContent = "Ce produit est déjà réservé.";
+                    } else {
+                        location.reload();
+                    }
+                });
+            });
+
+            // Fonction pour ajouter un produit au panier
+            function addToCart(productId) {
+                cartItems.push(productId);
+                updateCart();
+            }
+
+            $('.add-to-cart-btn').on('click', function () {
+                let productId = $(this).data('product-id');
+                if (!$(this).hasClass('added-to-cart')) {
+                    addToCart(productId);
+                    $(this).addClass('added-to-cart');
+                }
+            });
+
+            let cartItems = [];
+
+            // Fonction pour mettre à jour le panier
+            function updateCart() {
+                $('#cartCount').text(cartItems.length);
+            }
+
+            // Afficher les éléments du panier
+            $('.cart-icon').click(function () {
+                displayCartItems();
+            });
+
+            function displayCartItems() {
+                let cartItemsHtml = '';
+                if (cartItems.length === 0) {
+                    cartItemsHtml = '<li>Panier vide</li>';
+                } else {
+                    cartItemsHtml = cartItems.map((productId, index) => {
+                        return <li><i class="fas fa-caret-right"></i><span class="product-name">${productId}</span><button class="delete-btn" data-index="${index}"><i class="fas fa-trash"></i></button></li>;
+                    }).join('');
+                }
+                $('#cartItems').html(cartItemsHtml).toggle();
+            }
+
+            // Supprimer un élément du panier
+            $('#cartItems').on('click', '.delete-btn', function () {
+                let indexToRemove = $(this).data('index');
+                cartItems.splice(indexToRemove, 1);
+                updateCart();
+                displayCartItems();
+            });
+            $('#validerPanierBtn').on('click', function (e) {
+                e.preventDefault();
+
+                let productId = $('#productId').val();
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/Acceuil/AjouterAuPanier',
+                    data: { produitId: productId },
+                    success: function (response) {
+                        if (response.isReserved) {
+                            $('#reservationMessage e').text("Ce produit est déjà réservé.");
+                        } else {
+                            // Si le produit n'est pas réservé, soumettre le formulaire pour valider le panier
+                            $('form').submit();
+                        }
+                    },
+                    error: function () {
+                        console.log('Erreur lors de la vérification de la réservation');
+                    }
+                });
+            });
+
+
+        });</script>
+</body>
+</html>

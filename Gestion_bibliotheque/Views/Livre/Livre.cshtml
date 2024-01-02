@@ -1,0 +1,174 @@
+﻿@model List<Gestion_bibliotheque.Models.Produit>
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Produits - Site Luxe</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Styles pour un look luxueux et moderne */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(to right, #f12711, #f5af19);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer {
+            background: linear-gradient(to right, #f12711, #f5af19);
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .product-card {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+            .product-card:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+            }
+
+            .product-card img {
+                width: 100%;
+                height: auto;
+                border-bottom: 1px solid #eee;
+                transition: transform 0.3s ease-in-out;
+            }
+
+            .product-card:hover img {
+                transform: translateY(-3%);
+            }
+
+        .product-details {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .product-description {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .product-genre {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .change-color {
+            transition: background-color 0.3s ease-in-out;
+        }
+
+            .change-color:hover {
+                background-color: #ffcc00;
+            }
+
+        .cart {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 10px 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-icon {
+            font-size: 24px;
+            color: #ff8c00;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            list-style: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+            width: 200px;
+        }
+
+            .cart-items li {
+                margin-bottom: 5px;
+                display: flex;
+                align-items: center;
+            }
+
+                .cart-items li .product-name {
+                    margin-left: 5px;
+                }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <h1>Librairie</h1>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+        <div class="row">
+            @foreach (var produit in Model)
+            {
+                <div class="col-md-4">
+                    <div class="product-card">
+                        <img src="@produit.CheminImage" class="card-img-top" alt="Product Image">
+                        <div class="product-details">
+                            <h5 class="product-title">@produit.Nom</h5>
+                            <p class="product-description">@produit.Description</p>
+                            <p class="product-genre">Genre : @produit.Genre</p>
+                            <a href="@Url.Action("Details", "Acceuil", new { id = produit.Id })" class="btn btn-primary details-btn change-color">Détails</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,214 @@
+﻿@model List<Gestion_bibliotheque.Models.Produit>
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Produits - Site Luxe</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Styles pour un look extraordinaire, attrayant et moderne */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(to right, #ff5722, #ff9800);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #fff;
+            transition: color 0.3s ease-in-out;
+        }
+
+            .logout-btn:hover {
+                color: #ffab91;
+            }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-right: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #ff5722;
+            font-size: 16px;
+            color: #ff5722;
+            background-color: #fff;
+            margin-right: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 18px;
+            background-color: #ff5722;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+            button:hover {
+                transform: scale(1.05);
+                background-color: #ff9800;
+            }
+
+        .row .col-md-4 {
+            margin-bottom: 20px;
+        }
+
+        .product-card {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+            .product-card:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+            }
+
+            .product-card img {
+                width: 100%;
+                height: auto;
+                border-bottom: 2px solid #ff5722;
+                transition: transform 0.3s ease-in-out;
+            }
+
+            .product-card:hover img {
+                transform: translateY(-3%);
+            }
+
+        .product-details {
+            padding: 24px;
+        }
+
+        .product-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .product-description {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .product-genre {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .details-btn {
+            background-color: #ff5722;
+            color: #fff;
+            transition: background-color 0.3s ease-in-out;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+            .details-btn:hover {
+                background-color: #ff9800;
+            }
+
+        footer {
+            background: linear-gradient(to right, #ff5722, #ff9800);
+            color: #fff;
+            padding: 20px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Librairie</h1>
+        <a href="@Url.Action("Logout", "Home")" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+    </header>
+    <form asp-controller="Acceuil" asp-action="Recherche" method="get">
+        <label for="SearchTerm">Recherchez un livre:</label>
+        <input type="text" name="SearchTerm" />
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <div class="container">
+        <form asp-controller="Livre" asp-action="Livre" method="post">
+            <label for="Genre">Choisissez un GENRE :</label>
+            <select name="SelectedGenre">
+                @foreach (var produit in Model)
+                {
+                    <option value="@produit.Genre">@produit.Genre</option>
+                }
+            </select>
+            <button type="submit">Envoyer</button>
+        </form>
+
+        <div class="row">
+            @foreach (var produit in Model)
+            {
+                <div class="col-md-4">
+                    <div class="product-card">
+                        <img src="@produit.CheminImage" class="card-img-top" alt="Image du Produit">
+                        <div class="product-details">
+                            <h5 class="product-title">@produit.Nom</h5>
+                            <p class="product-description">@produit.Description</p>
+                            <p class="product-genre">Genre : @produit.Genre</p>
+                            <a href="@Url.Action("Details", "Acceuil", new { id = produit.Id })"
+                               class="btn btn-primary details-btn change-color">Détails</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Site Luxe. Tous droits réservés.</p>
+    </footer>
+
+</body>
+
+</html>
